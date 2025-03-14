@@ -1,14 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import Forms from './Forms';
+import Listado from './Listado';
+import Top from './Top';
+import Down from './Down';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    < Top/>
+    < Listado/>
+    <Down/>
   </React.StrictMode>
 );
 
