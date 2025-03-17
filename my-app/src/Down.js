@@ -8,10 +8,12 @@ function Down() {
 
 
   return (
-    <div class="row">
-      Contact us: +57 3102105253 - info@robot-lovers.com -@robot-lovers -
-    
-  </div>
+  
+    <div className="text-center text-dark mt-3">
+      Contact us: +57 3102105253 - info@robot-lovers.com - @robot-lovers
+    </div>
+   
+  
 
     
   );

@@ -1,109 +1,74 @@
-import { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import React, { useState } from "react";
+import { Form, Button, Container } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Listado from './Listado';
 
+function Login() {
+  const [formValues, setFormValues] = useState({ user: "", password: "" });
+  const [error, setError] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Controla si se muestra el login o el listado
 
-function Forms() {
+  const usuarios = { pepito: "1234", juan: "3456" };
+  const value = usuarios[formValues.user] || false;
 
-  //TODO leer credenciales a usuarios 
-
-  const usuarios = {"pepito":"1234","juan":"3456"}; 
-  const [formValues, setFormValues] = useState({user:"", password:""});
-  const [validationStates, setIsValid] = useState({userState:true, passwordState:true});
-  const handleUserChange = ((e) => {
-    setFormValues({...formValues, user: e.target.value})
-  });
- 
-  const handlePasswordChange = ((e) => {
-    setFormValues({...formValues, password: e.target.value})
-    /*
-    if (formValues.password.length <9 || (!formValues.password.match(/[\w]+/) ||!formValues.password.match(/[\d]+/))){
-        setIsValid({...validationStates, passwordState: false});
-    }else{
-      setIsValid({...validationStates, passwordState: true});
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (value === formValues.password) {
+      setError(false);
+      setIsLoggedIn(true); // Cambia a mostrar el listado
+    } else {
+      setError(true);
     }
+  };
 
-    console.log(validationStates.passwordState);
-    */
+  const handleUserChange = (e) => {
+    setFormValues({ ...formValues, user: e.target.value });
+  };
 
-  });
- 
-  const handleSelectChange = ((e) => {
-    setFormValues({...formValues, favClass: e.target.value})
-  });
-  const clickSubmit = (() => {
-    //Call fetch
-    console.log("Clicked")
+  const handlePasswordChange = (e) => {
+    setFormValues({ ...formValues, password: e.target.value });
+  };
 
-    //Validate in hash right credentials 
-    alert(formValues.user)
-    alert(formValues.password)
-    if (usuarios[formValues.user] == formValues.password){
-      setIsValid({...validationStates, userState: true});
-      setIsValid({...validationStates, passwordState: true});
-
-    }
-    else{
-      setIsValid({...validationStates, userState: false});
-      setIsValid({...validationStates, passwordState: false});
-
-    }
-
-    //Cambiar página
-
-
-    //Validate email 
-    /*
-    if (!formValues.email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)){
-      setIsValid({...validationStates, emailState: false});
-    }else{
-      setIsValid({...validationStates, emailState: true});
-    }
-    */
-    //alert(JSON.stringify(formValues))
-  }); 
-  const clickSubmitCancelar = (() => {
-    //Call fetch
-    console.log("Canceled")
-
-    //Validate email 
-    /*
-    if (!formValues.email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)){
-      setIsValid({...validationStates, emailState: false});
-    }else{
-      setIsValid({...validationStates, emailState: true});
-    }
-    */
-    //alert(JSON.stringify(formValues))
-  })
+  // Si está autenticado, muestra el Listado
+  if (isLoggedIn) {
+    return <Listado />;
+  }
 
   return (
-    <div>
-      <h1>Inicio de sesión </h1>
-     
-      <Form>
-      <Form.Group className="mb-6" controlId="formBasicEmail">
-        <Form.Label>Nombre de usuario</Form.Label>
-        <Form.Control type="text" placeholder="" onChange={handleUserChange} value={formValues.user} isInvalid={!validationStates.userState}/>
-      </Form.Group>
- 
-      <Form.Group className="mb-3" controlId="formBasicPassword">
-        <Form.Label>Contraseña</Form.Label>
-        <Form.Control type="password" placeholder="Password" onChange={handlePasswordChange} value={formValues.password}  isInvalid={!validationStates.passwordState} />
-        
-      </Form.Group>
-  
-      <Button variant="primary" onClick={clickSubmit}>
-        Ingresar
-      </Button>
-      <Button variant="primary" onClick={clickSubmitCancelar}>
-        Cancelar
-      </Button>
-      { !validationStates.passwordState && !validationStates.userState && (<Form.Text className="text-danger"> Error de autenticación. Revise sus credenciales</Form.Text>)}
+    <Container className="mt-5">
+      <h3 className="text-center mb-4">Inicio de sesión</h3>
+      <Form onSubmit={handleLogin}>
+        <Form.Group className="mb-3">
+          <Form.Label><b>Nombre de usuario</b></Form.Label>
+          <Form.Control
+            type="text"
+            value={formValues.user}
+            onChange={handleUserChange}
+            placeholder="Ingrese su usuario"
+          />
+        </Form.Group>
 
-    </Form>
-    </div>
+        <Form.Group className="mb-3">
+          <Form.Label><b>Contraseña</b></Form.Label>
+          <Form.Control
+            type="password"
+            value={formValues.password}
+            onChange={handlePasswordChange}
+            placeholder="Ingrese su contraseña"
+          />
+        </Form.Group>
+
+        {error && (
+          <p className="text-danger">Error de autenticación. Revise sus credenciales.</p>
+        )}
+
+        <div className="d-flex justify-content-center">
+          <Button variant="primary" type="submit" className="me-2">Ingresar</Button>
+          <Button variant="danger" type="reset">Cancelar</Button>
+        </div>
+      </Form>
+    </Container>
   );
 }
 
-export default Forms;
+export default Login;

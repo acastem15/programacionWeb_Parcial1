@@ -1,77 +1,75 @@
-
-
-import BootstrapTable from 'react-bootstrap-table-next';
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-
-const { useEffect, useState } = require("react");
+import { useEffect, useState } from "react";
+import { Row, Col, Container, Card,Image } from "react-bootstrap";
 
 function Listado() {
   const [robots, setRobots] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [robotSeleccionado, setRobotSeleccionado] = useState(null); 
-  
+  const [robotSeleccionado, setRobotSeleccionado] = useState(null);
+
   useEffect(() => {
     fetch("http://localhost:3001/robots") // Ajusta la URL a tu servidor
       .then((response) => response.json())
       .then((data) => {
         setRobots(data);
         setLoading(false);
-      })  }, []);
+      });
+  }, []);
 
-  console.log("ayudo");
-  console.log(robots);
-  console.log("aaaaaa");
+  const robotSeleccionadoSelect = (item) => {
+    fetch(`http://localhost:3001/robots/${item.id}`) // Ajusta la URL a tu servidor
+      .then((response) => response.json())
+      .then((data) => {
+        setRobotSeleccionado(data);
+      });
+  };
 
-  const columnas = [
-    { dataField: 'id', text: 'ID' },
-    { dataField: 'nombre', text: 'Nombre' },
-    { dataField: 'modelo', text: 'Modelo' },
-    { dataField: 'empresaFabricante', text: 'Empresa Fabricante' },
+  return (
+    <Container>
+      <Row>
+        <Col sm={8}>
+          <div className="container mt-4">
+            <table className="table table-striped">
+              <thead className="table-dark">
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Modelo</th>
+                  <th>Empresa Fabricante</th>
+                </tr>
+              </thead>
+              <tbody>
+                {robots.map((item) => (
+                  <tr key={item.id} onClick={() => robotSeleccionadoSelect(item)}>
+                    <td>{item.id}</td>
+                    <td>{item.nombre}</td>
+                    <td>{item.modelo}</td>
+                    <td>{item.empresaFabricante}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Col>
 
-  ]; 
-
-
-
-/*
-const [mascotas, setMascotas] = useState([]);
- useEffect(() => {
-   const URL =
-     "https://gist.githubusercontent.com/josejbocanegra/829a853c6c68880477697acd0490cecc/raw/99c31372b4d419a855e53f0e891246f313a71b20/mascotas.json";
-   fetch(URL)
-     .then((data) => data.json())
-     .then((data) => {
-       setMascotas(data);
-     });
- }, []);}*/
-
- return (
-  <div className="container mt-4">
-    <table className="table table-striped">
-      <thead className="thead-dark"> {/* Cabecera negra */}
-        <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Modelo</th>
-          <th>empresaFabricante</th>
-        </tr>
-      </thead>
-      <tbody>
-        {robots.map((item) => (
-          <tr key={item.id} onClick={() => setRobotSeleccionado(item)}>
-            <td>{item.id}</td>
-            <td>{item.nombre}</td>
-            <td>{item.modelo}</td>
-            <td>{item.empresaFabricante}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-
-</div>
-);
-
-
+        {/* Mostrar un Card con la información del robot seleccionado */}
+        {robotSeleccionado && (
+          <Col sm={4}>
+            <Card className="mt-4">
+              <Card.Body>
+                <Card.Title>{robotSeleccionado.nombre}</Card.Title>
+                <img src={robotSeleccionado.imagen} rounded fluid alt="Foto de perfil" />
+                <Card.Text>
+                <b>Año de fabricacion:</b> {robotSeleccionado.capacidadProcesamiento} <br />
+                  <b>Modelo:</b> {robotSeleccionado.capacidadProcesamiento} <br />
+                  <b>Humor:</b> {robotSeleccionado.humor}
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+        )}
+      </Row>
+    </Container>
+  );
 }
 
 export default Listado;
